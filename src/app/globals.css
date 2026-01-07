@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #fdfbf7;
+  --foreground: #1a1a1a;
+  
+  /* Fun Palette */
+  --primary: #8b5cf6; /* Violet 500 */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #a3e635; /* Lime 400 */
+  --secondary-foreground: #1a1a1a;
+  
+  --accent: #f97316; /* Orange 500 */
+  --accent-foreground: #ffffff;
+  
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #8b5cf6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Keeping it light/fun by default for now, but valid overrides here if needed. 
+       For this specific "Framer-style" fun app, light mode often works best for the "playful" vibe, 
+       but let's provide a dark alternative that isn't pitch black. */
+    --background: #0f172a;
+    --foreground: #fdfbf7;
+    
+    --primary: #a78bfa;
+    --primary-foreground: #0f172a;
+    
+    --secondary: #bef264;
+    --secondary-foreground: #0f172a;
+    
+    --card: #1e293b;
+    --card-foreground: #fdfbf7;
+    
+    --border: #334155;
+    --input: #334155;
+  }
+}
+
+/* Explicit theme overrides when a `data-theme` attribute is set on <html> */
+[data-theme="dark"] {
+  --background: #0f172a;
+  --foreground: #fdfbf7;
+
+  --primary: #a78bfa;
+  --primary-foreground: #0f172a;
+
+  --secondary: #bef264;
+  --secondary-foreground: #0f172a;
+
+  --card: #1e293b;
+  --card-foreground: #fdfbf7;
+
+  --border: #334155;
+  --input: #334155;
+}
+
+[data-theme="light"] {
+  --background: #fdfbf7;
+  --foreground: #1a1a1a;
+
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+
+  --secondary: #a3e635;
+  --secondary-foreground: #1a1a1a;
+
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
