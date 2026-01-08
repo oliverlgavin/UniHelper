@@ -20,3 +20,25 @@ export type ParseResult = {
   module?: LearningModule; // Optional until AI is fully hooked up
 };
 
+export interface SavedModule extends LearningModule {
+  id: string;
+  user_id: string;
+  title: string;
+  original_filename: string;
+  file_type: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UploadHistory {
+  id: string;
+  user_id: string;
+  module_id: string | null;
+  filename: string;
+  file_type: string;
+  file_size: number;
+  status: "processing" | "completed" | "failed";
+  error_message: string | null;
+  created_at: string;
+}
+

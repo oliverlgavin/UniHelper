@@ -1,12 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Library, LogOut } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { useAppStore } from "@/store/use-app-store";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { user, enterLibrary } = useAppStore();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    router.push("/");
+    router.refresh();
+    setOpen(false);
+  };
+
+  const handleLibrary = () => {
+    enterLibrary();
+    setOpen(false);
+  };
 
   useEffect(() => {
     // read initial theme from document
@@ -76,9 +97,29 @@ export default function MobileNav() {
             <nav className="mt-6 flex flex-col gap-6">
               <a href="#" className="font-semibold">How it works</a>
               <a href="#" className="font-semibold">Features</a>
-              <a href="#" className="font-semibold text-primary">Sign In</a>
 
-              <div className="pt-4">
+              {user ? (
+                <>
+                  <div className="py-2 border-t border-border">
+                    <p className="text-sm text-muted-foreground mb-1">Signed in as</p>
+                    <p className="font-semibold">{user.email}</p>
+                  </div>
+                  <button onClick={handleLibrary} className="font-semibold text-left flex items-center gap-2">
+                    <Library size={18} />
+                    My Library
+                  </button>
+                  <button onClick={handleSignOut} className="font-semibold text-left flex items-center gap-2 text-red-600">
+                    <LogOut size={18} />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link href="/auth/login" className="font-semibold text-primary" onClick={() => setOpen(false)}>
+                  Sign In
+                </Link>
+              )}
+
+              <div className="pt-4 border-t border-border">
                 <ThemeToggle />
               </div>
             </nav>

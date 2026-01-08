@@ -3,6 +3,7 @@ import { parseFile } from "@/lib/parsers";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
 
 // Force Node.js runtime for file parsing libraries
 export const runtime = "nodejs";
@@ -27,6 +28,14 @@ const LearningSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Check authentication
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     console.log("API route called");
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -50,7 +59,13 @@ export async function POST(req: NextRequest) {
     // Check for API Key
     if (!process.env.OPENAI_API_KEY) {
       console.warn("No OPENAI_API_KEY found, returning mock data.");
-      return NextResponse.json(MOCK_DATA);
+      return NextResponse.json({
+        ...MOCK_DATA,
+        userId: user.id,
+        filename: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+      });
     }
 
     const { object } = await generateObject({
@@ -77,7 +92,13 @@ export async function POST(req: NextRequest) {
       `,
     });
 
-    return NextResponse.json(object);
+    return NextResponse.json({
+      ...object,
+      userId: user.id,
+      filename: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+    });
 
   } catch (error) {
     console.error("Processing error:", error);

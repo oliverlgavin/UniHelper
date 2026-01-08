@@ -2,13 +2,57 @@
 
 import { motion } from "framer-motion";
 import { useAppStore } from "@/store/use-app-store";
-import { Calendar, Clock, BookOpen, Gamepad2, RefreshCcw } from "lucide-react";
+import { Calendar, Clock, BookOpen, Gamepad2, RefreshCcw, Save, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function DashboardView() {
-  const { data, reset, enterGame } = useAppStore();
+  const { data, reset, enterGame, user, currentModuleId, addSavedModule } = useAppStore();
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(!!currentModuleId);
 
   if (!data) return null;
+
+  const handleSave = async () => {
+    if (!user || !data) return;
+
+    setSaving(true);
+
+    try {
+      // Prompt for title
+      const title = window.prompt("Enter a title for this module:", data.learningPlan[0]?.title || "Untitled Module");
+
+      if (!title) {
+        setSaving(false);
+        return;
+      }
+
+      const response = await fetch("/api/modules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          summary: data.summary,
+          learningPlan: data.learningPlan,
+          quiz: data.quiz,
+          original_filename: (data as any).filename || "unknown.pdf",
+          file_type: (data as any).fileType || "application/pdf",
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save module");
+
+      const { module } = await response.json();
+      addSavedModule(module);
+      setSaved(true);
+      alert("Module saved successfully!");
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Failed to save module. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8 pb-20">
@@ -34,22 +78,40 @@ export function DashboardView() {
         </div>
 
         <div className="md:col-span-1 flex flex-col gap-4">
-           <button
-             onClick={reset}
-             className="bg-card hover:bg-muted transition-colors rounded-2xl p-4 font-bold flex items-center justify-center gap-2 text-muted-foreground"
-           >
-             <RefreshCcw size={18} /> Upload New
-           </button>
+          {user && (
+            <button
+              onClick={handleSave}
+              disabled={saving || saved}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors rounded-2xl p-4 font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {saved ? (
+                <>
+                  <Check size={18} /> Saved
+                </>
+              ) : (
+                <>
+                  <Save size={18} /> {saving ? "Saving..." : "Save Module"}
+                </>
+              )}
+            </button>
+          )}
 
-           <motion.button
-             whileHover={{ scale: 1.05 }}
-             whileTap={{ scale: 0.95 }}
-             className="flex-1 bg-secondary text-secondary-foreground rounded-3xl p-6 font-black text-2xl shadow-lg flex flex-col items-center justify-center gap-2 border-2 border-black"
-             onClick={enterGame}
-           >
-             <Gamepad2 size={40} />
-             Play Quiz
-           </motion.button>
+          <button
+            onClick={reset}
+            className="bg-card hover:bg-muted transition-colors rounded-2xl p-4 font-bold flex items-center justify-center gap-2 text-muted-foreground"
+          >
+            <RefreshCcw size={18} /> Upload New
+          </button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex-1 bg-secondary text-secondary-foreground rounded-3xl p-6 font-black text-2xl shadow-lg flex flex-col items-center justify-center gap-2 border-2 border-black"
+            onClick={enterGame}
+          >
+            <Gamepad2 size={40} />
+            Play Quiz
+          </motion.button>
         </div>
       </motion.div>
 

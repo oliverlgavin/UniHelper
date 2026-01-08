@@ -4,14 +4,17 @@ import { UploadZone } from "@/components/upload-zone";
 import { ProcessingView } from "@/components/processing-view";
 import { DashboardView } from "@/components/dashboard-view";
 import { GameView } from "@/components/game-view";
+import { LibraryView } from "@/components/library-view";
 import { useAppStore } from "@/store/use-app-store";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles, Zap, BrainCircuit } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileNav from "@/components/MobileNav";
+import { UserMenu } from "@/components/auth/user-menu";
+import Link from "next/link";
 
 export default function Home() {
-  const { view, error } = useAppStore();
+  const { view, error, user } = useAppStore();
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -37,7 +40,13 @@ export default function Home() {
             <nav className="flex items-center gap-6 text-sm font-bold text-muted-foreground backdrop-blur-sm bg-white/30 dark:bg-black/30 px-4 py-2 rounded-full">
               <a href="#" className="hover:text-foreground transition-colors">How it works</a>
               <a href="#" className="hover:text-foreground transition-colors">Features</a>
-              <a href="#" className="text-primary hover:text-primary/80 transition-colors">Sign In</a>
+              {user ? (
+                <UserMenu user={user} />
+              ) : (
+                <Link href="/auth/login" className="text-primary hover:text-primary/80 transition-colors">
+                  Sign In
+                </Link>
+              )}
               <div className="ml-2">
                 <ThemeToggle />
               </div>
@@ -143,6 +152,18 @@ export default function Home() {
               className="w-full"
             >
               <GameView />
+            </motion.div>
+          )}
+
+          {view === "library" && (
+            <motion.div
+              key="library"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="w-full"
+            >
+              <LibraryView />
             </motion.div>
           )}
         </AnimatePresence>
