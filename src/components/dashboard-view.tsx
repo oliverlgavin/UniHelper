@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useAppStore } from "@/store/use-app-store";
-import { Calendar, Clock, BookOpen, Gamepad2, RefreshCcw, Save, Check } from "lucide-react";
+import { BookOpen, Gamepad2, RefreshCcw, Save, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { EnhancedSchedule } from "./enhanced-schedule";
+import { DayPlan } from "@/lib/types";
 
 export function DashboardView() {
   const { data, reset, enterGame, user, currentModuleId, addSavedModule } = useAppStore();
@@ -16,6 +18,9 @@ export function DashboardView() {
   // Ensure arrays exist to prevent map errors
   const learningPlan = data.learningPlan || [];
   const quiz = data.quiz || [];
+
+  // Normalize learning plan to new format (backward compatible)
+  const normalizedPlan = normalizeLearningPlan(learningPlan);
 
   const handleSave = async () => {
     if (!user || !data) return;
@@ -130,49 +135,42 @@ export function DashboardView() {
         </div>
       </motion.div>
 
-      {/* Timeline */}
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Daily Schedule</h2>
-        <div className="grid gap-4">
-          {learningPlan.map((item, index) => (
-            <motion.div
-              key={item.day}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
-              style={{ background: "var(--card)", color: "var(--card-foreground)", borderColor: "var(--border)" }}
-            >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                    <span className="bg-primary text-white font-bold px-3 py-1 rounded-full text-sm">
-                    Day {item.day}
-                  </span>
-                    <h3 className="text-xl font-bold" style={{ color: "var(--card-foreground)" }}>{item.title}</h3>
-                </div>
-                  <div className="flex items-center gap-2 text-sm bg-muted px-3 py-1 rounded-full w-fit" style={{ color: "var(--card-foreground)" }}>
-                  <Clock size={14} /> {item.timeEstimate}
-                </div>
-              </div>
-              
-                <p className="mb-4" style={{ color: "var(--card-foreground)" }}>{item.description}</p>
-              
-              <div className="space-y-2">
-                  <h4 className="font-bold text-sm uppercase tracking-wider" style={{ color: "var(--card-foreground)" }}>Activities</h4>
-                <ul className="grid gap-2 sm:grid-cols-2">
-                  {item.activities.map((act, i) => (
-                      <li key={i} className="flex items-center gap-2 bg-muted/50 p-2 rounded-lg text-sm" style={{ color: "var(--card-foreground)" }}>
-                      <div className="w-2 h-2 rounded-full bg-accent" />
-                      {act}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+      {/* Enhanced Schedule */}
+      <EnhancedSchedule
+        learningPlan={normalizedPlan}
+        title={learningPlan[0]?.title || "Study Plan"}
+      />
     </div>
   );
+}
+
+// Helper to normalize old data format to new DayPlan format
+function normalizeLearningPlan(plan: any[]): DayPlan[] {
+  if (!plan || plan.length === 0) return [];
+
+  // Check if it's already in the new format (has phases)
+  if (plan[0]?.phases) {
+    return plan as DayPlan[];
+  }
+
+  // Convert old format to new format
+  return plan.map(item => ({
+    day: item.day,
+    title: item.title || `Day ${item.day}`,
+    description: item.description || "",
+    learningObjectives: [],
+    phases: item.activities ? [
+      {
+        phase: "Deep Dive",
+        duration: item.timeEstimate || "1 hour",
+        objective: item.description || "Complete the study tasks",
+        tasks: item.activities || []
+      }
+    ] : [],
+    resources: [],
+    keyTerms: [],
+    checkpoints: [],
+    totalTime: item.timeEstimate || "1 hour"
+  }));
 }
 

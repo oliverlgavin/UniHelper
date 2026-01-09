@@ -21,6 +21,7 @@
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
+    "html2pdf.js": "^0.13.0",
     "lucide-react": "^0.562.0",
     "mammoth": "^1.11.0",
     "meshline": "^3.3.1",

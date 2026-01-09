@@ -1,12 +1,36 @@
+// Deep work phase within a study session
+export interface DeepWorkPhase {
+  phase: string; // e.g., "Warm-Up", "Deep Dive", "Application", "Review"
+  duration: string; // e.g., "20 minutes"
+  objective: string;
+  tasks: string[];
+}
+
+// Learning resource with URL and type
+export interface LearningResource {
+  title: string;
+  type: "video" | "article" | "interactive" | "textbook" | "podcast";
+  url: string;
+  description: string;
+  duration: string; // Time estimate (empty string if unknown)
+}
+
+// Enhanced day plan with structured phases
+export interface DayPlan {
+  day: number;
+  title: string;
+  description: string;
+  learningObjectives: string[]; // Clear goals for the session
+  phases: DeepWorkPhase[]; // Structured deep work phases
+  resources: LearningResource[]; // Curated external sources
+  keyTerms: string[]; // Important vocabulary/concepts
+  checkpoints: string[]; // Self-assessment questions
+  totalTime: string; // Total estimated time
+}
+
 export interface LearningModule {
   summary: string;
-  learningPlan: {
-    day: number;
-    title: string;
-    description: string;
-    activities: string[];
-    timeEstimate: string;
-  }[];
+  learningPlan: DayPlan[];
   quiz: {
     question: string;
     options: string[];
