@@ -11,6 +11,9 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  // Prevent webpack from bundling these packages on server-side
+  // This fixes pdf-parse debug mode issue and native module problems
+  serverExternalPackages: ['pdf-parse'],
   webpack: (config, { isServer }) => {
     if (isServer) {
       // Exclude native modules from webpack bundling
