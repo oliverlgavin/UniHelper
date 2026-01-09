@@ -13,6 +13,10 @@ export function DashboardView() {
 
   if (!data) return null;
 
+  // Ensure arrays exist to prevent map errors
+  const learningPlan = data.learningPlan || [];
+  const quiz = data.quiz || [];
+
   const handleSave = async () => {
     if (!user || !data) return;
 
@@ -20,7 +24,7 @@ export function DashboardView() {
 
     try {
       // Prompt for title
-      const title = window.prompt("Enter a title for this module:", data.learningPlan[0]?.title || "Untitled Module");
+      const title = window.prompt("Enter a title for this module:", learningPlan[0]?.title || "Untitled Module");
 
       if (!title) {
         setSaving(false);
@@ -33,8 +37,8 @@ export function DashboardView() {
         body: JSON.stringify({
           title,
           summary: data.summary,
-          learningPlan: data.learningPlan,
-          quiz: data.quiz,
+          learningPlan: learningPlan,
+          quiz: quiz,
           original_filename: (data as any).filename || "unknown.pdf",
           file_type: (data as any).fileType || "application/pdf",
         }),
@@ -130,7 +134,7 @@ export function DashboardView() {
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">Daily Schedule</h2>
         <div className="grid gap-4">
-          {data.learningPlan.map((item, index) => (
+          {learningPlan.map((item, index) => (
             <motion.div
               key={item.day}
               initial={{ opacity: 0, x: -20 }}

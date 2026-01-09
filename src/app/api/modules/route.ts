@@ -19,7 +19,14 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ modules: data });
+    // Transform snake_case to camelCase for frontend
+    const transformedModules = data?.map((module: Record<string, unknown>) => ({
+      ...module,
+      learningPlan: module.learning_plan,
+      learning_plan: undefined,
+    })) || [];
+
+    return NextResponse.json({ modules: transformedModules });
   } catch (error) {
     console.error("Error fetching modules:", error);
     return NextResponse.json(
@@ -72,7 +79,14 @@ export async function POST(req: NextRequest) {
       status: "completed",
     });
 
-    return NextResponse.json({ module: data });
+    // Transform snake_case to camelCase for frontend
+    const transformedModule = {
+      ...data,
+      learningPlan: data.learning_plan,
+      learning_plan: undefined,
+    };
+
+    return NextResponse.json({ module: transformedModule });
   } catch (error) {
     console.error("Error creating module:", error);
     return NextResponse.json(

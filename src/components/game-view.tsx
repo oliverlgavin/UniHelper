@@ -14,7 +14,7 @@ export function GameView() {
   const [selected, setSelected] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
 
-  if (!data || !data.quiz) return null;
+  if (!data || !data.quiz || data.quiz.length === 0) return null;
 
   const question = data.quiz[currentQ];
   const isLast = currentQ === data.quiz.length - 1;
