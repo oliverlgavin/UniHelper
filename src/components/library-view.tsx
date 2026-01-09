@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAppStore } from "@/store/use-app-store";
+import { SavedModule } from "@/lib/types";
 import { BookOpen, Calendar, Trash2, ArrowLeft } from "lucide-react";
 
 export function LibraryView() {
@@ -44,15 +45,18 @@ export function LibraryView() {
     }
   };
 
-  const handleLoadModule = (module: any) => {
+  const handleLoadModule = (module: SavedModule) => {
     loadModule({
       summary: module.summary,
-      learningPlan: module.learning_plan,
+      learningPlan: module.learningPlan,
       quiz: module.quiz,
       id: module.id,
+      user_id: module.user_id,
       created_at: module.created_at,
+      updated_at: module.updated_at,
       title: module.title,
       original_filename: module.original_filename,
+      file_type: module.file_type,
     });
   };
 
@@ -129,7 +133,7 @@ export function LibraryView() {
 
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {module.learning_plan?.length || 0} days
+                  {module.learningPlan?.length || 0} days
                 </span>
                 <span className="font-medium">
                   {module.quiz?.length || 0} questions

@@ -79,29 +79,40 @@ export function DashboardView() {
 
         <div className="md:col-span-1 flex flex-col gap-4">
           {user && (
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSave}
               disabled={saving || saved}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors rounded-2xl p-4 font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+              className={cn(
+                "rounded-2xl p-4 font-bold flex items-center justify-center gap-3 shadow-md border-2 transition-all",
+                saved
+                  ? "bg-green-500/10 text-green-600 border-green-500/30 cursor-default"
+                  : "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 hover:border-primary/50",
+                "disabled:opacity-50"
+              )}
             >
               {saved ? (
                 <>
-                  <Check size={18} /> Saved
+                  <Check size={20} /> Saved
                 </>
               ) : (
                 <>
-                  <Save size={18} /> {saving ? "Saving..." : "Save Module"}
+                  <Save size={20} /> {saving ? "Saving..." : "Save Module"}
                 </>
               )}
-            </button>
+            </motion.button>
           )}
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={reset}
-            className="bg-card hover:bg-muted transition-colors rounded-2xl p-4 font-bold flex items-center justify-center gap-2 text-muted-foreground"
+            className="bg-card hover:bg-muted/80 transition-all rounded-2xl p-4 font-bold flex items-center justify-center gap-3 border-2 border-border shadow-md hover:shadow-lg hover:border-muted-foreground/30"
           >
-            <RefreshCcw size={18} /> Upload New
-          </button>
+            <RefreshCcw size={20} className="text-accent" />
+            <span>Upload New</span>
+          </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.05 }}

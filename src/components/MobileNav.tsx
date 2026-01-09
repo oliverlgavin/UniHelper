@@ -95,8 +95,7 @@ export default function MobileNav() {
             </div>
 
             <nav className="mt-6 flex flex-col gap-6">
-              <a href="#" className="font-semibold">How it works</a>
-              <a href="#" className="font-semibold">Features</a>
+              <Link href="/how-it-works" className="font-semibold" onClick={() => setOpen(false)}>How it works</Link>
 
               {user ? (
                 <>

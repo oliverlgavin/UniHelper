@@ -96,11 +96,11 @@ export function GameView() {
             {question.options.map((opt, i) => {
               const isSelected = selected === i;
               const isCorrect = i === question.correctAnswer;
-              
-              let bgClass = "bg-white hover:bg-gray-50";
+
+              let bgClass = "bg-muted/50 hover:bg-muted border-border";
               if (selected !== null) {
-                if (isCorrect) bgClass = "bg-green-100 dark:bg-green-900 border-green-500";
-                else if (isSelected) bgClass = "bg-red-100 dark:bg-red-900 border-red-500";
+                if (isCorrect) bgClass = "bg-green-100 dark:bg-green-900/50 border-green-500 dark:border-green-400";
+                else if (isSelected) bgClass = "bg-red-100 dark:bg-red-900/50 border-red-500 dark:border-red-400";
               }
 
               return (
@@ -110,14 +110,14 @@ export function GameView() {
                   whileTap={selected === null ? { scale: 0.98 } : {}}
                   onClick={() => handleSelect(i)}
                   className={cn(
-                    "p-4 rounded-xl text-left font-medium transition-all border-2 border-transparent",
+                    "p-4 rounded-xl text-left font-medium transition-all border-2",
                     bgClass
                   )}
                 >
                   <div className="flex items-center justify-between">
-                    <span style={{ color: "var(--card-foreground)" }}>{opt}</span>
-                    {selected !== null && isCorrect && <CheckCircle className="text-green-600" size={20} />}
-                    {selected !== null && isSelected && !isCorrect && <XCircle className="text-red-600" size={20} />}
+                    <span className="text-foreground">{opt}</span>
+                    {selected !== null && isCorrect && <CheckCircle className="text-green-600 dark:text-green-400" size={20} />}
+                    {selected !== null && isSelected && !isCorrect && <XCircle className="text-red-600 dark:text-red-400" size={20} />}
                   </div>
                 </motion.button>
               );

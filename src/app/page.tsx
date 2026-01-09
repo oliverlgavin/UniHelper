@@ -14,7 +14,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 import Link from "next/link";
 
 export default function Home() {
-  const { view, error, user } = useAppStore();
+  const { view, error, user, reset } = useAppStore();
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -23,23 +23,28 @@ export default function Home() {
         <header className="w-full py-2 pb-4 md:pb-6">
           {/* Mobile bar: full-width with title left and hamburger right */}
           <div className="w-full flex items-center justify-between md:hidden px-2">
-            <h1 className="text-lg font-black tracking-tighter flex items-center gap-2 backdrop-blur-sm bg-white/30 dark:bg-black/30 px-3 py-1 rounded-full">
+            <button
+              onClick={reset}
+              className="text-lg font-black tracking-tighter flex items-center gap-2 backdrop-blur-sm bg-white/30 dark:bg-black/30 px-3 py-1 rounded-full hover:opacity-80 transition-opacity"
+            >
               🎓 Uni<span className="text-primary">Helper</span>
-            </h1>
+            </button>
             <MobileNav />
           </div>
 
           {/* Desktop header: original layout for md+ */}
           <div className="hidden md:flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <h1 className="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-2 backdrop-blur-sm bg-white/30 dark:bg-black/30 px-3 py-1 rounded-full">
+              <button
+                onClick={reset}
+                className="text-xl md:text-2xl font-black tracking-tighter flex items-center gap-2 backdrop-blur-sm bg-white/30 dark:bg-black/30 px-3 py-1 rounded-full hover:opacity-80 transition-opacity"
+              >
                 🎓 Uni<span className="text-primary">Helper</span>
-              </h1>
+              </button>
             </div>
 
             <nav className="flex items-center gap-6 text-sm font-bold text-muted-foreground backdrop-blur-sm bg-white/30 dark:bg-black/30 px-4 py-2 rounded-full">
-              <a href="#" className="hover:text-foreground transition-colors">How it works</a>
-              <a href="#" className="hover:text-foreground transition-colors">Features</a>
+              <Link href="/how-it-works" className="hover:text-foreground transition-colors">How it works</Link>
               {user ? (
                 <UserMenu user={user} />
               ) : (
